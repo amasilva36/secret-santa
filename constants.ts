@@ -1,10 +1,14 @@
-export const MAX_PARTICIPANTS = 5;
 export const MIN_PARTICIPANTS = 3;
 
-export const PLACEHOLDERS = [
+// No longer fixed placeholders, but we can keep a few for random suggestions if needed later
+// or just remove them.
+export const SUGGESTIONS = [
   "Ana",
   "Bruno",
   "Carla",
   "Daniel",
-  "Eduardo"
+  "Eduardo",
+  "Fernanda",
+  "Gabriel",
+  "Helena"
 ];
