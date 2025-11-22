@@ -4,25 +4,27 @@ import { InputPhase } from './components/InputPhase';
 import { RevealPhase } from './components/RevealPhase';
 import { generateAssignments } from './utils/santaLogic';
 import { Participant, Assignment, AppStage } from './types';
-import { MAX_PARTICIPANTS } from './constants';
 
 // Simple unique ID generator that works in non-secure contexts
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
-// Helper to create initial empty slots
-const createInitialParticipants = (): Participant[] => 
-  Array.from({ length: MAX_PARTICIPANTS }, () => ({
-    id: generateId(),
-    name: ''
-  }));
-
 const App: React.FC = () => {
   const [stage, setStage] = useState<AppStage>(AppStage.INPUT);
-  const [participants, setParticipants] = useState<Participant[]>(createInitialParticipants());
+  const [participants, setParticipants] = useState<Participant[]>([
+    { id: generateId(), name: '' } // Start with 1 (Organizer)
+  ]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
 
+  const addParticipant = () => {
+    setParticipants(prev => [...prev, { id: generateId(), name: '' }]);
+  };
+
+  const removeParticipant = (id: string) => {
+    setParticipants(prev => prev.filter(p => p.id !== id));
+  };
+
   const handleGenerate = () => {
-    // Filter out empty names just in case, though validation handles this
+    // Filter out empty names
     const validParticipants = participants.filter(p => p.name.trim() !== '');
     
     // Generate logic
@@ -33,17 +35,17 @@ const App: React.FC = () => {
       setStage(AppStage.REVEAL);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      alert("Não foi possível gerar pares válidos. Tente novamente com mais nomes (mínimo 3).");
+      alert("Não foi possível gerar pares válidos. Tente novamente.");
     }
   };
 
   const handleReset = () => {
-    // Reset immediately without confirmation since the event is concluded
     setStage(AppStage.INPUT);
-    setParticipants(createInitialParticipants());
+    setParticipants([{ id: generateId(), name: '' }]); // Reset to just organizer
     setAssignments([]);
   };
 
+  // Render Organizer View
   return (
     <div className="min-h-screen bg-slate-50 pb-20 font-sans">
       <Header />
@@ -54,6 +56,8 @@ const App: React.FC = () => {
             <InputPhase 
               participants={participants} 
               setParticipants={setParticipants} 
+              addParticipant={addParticipant}
+              removeParticipant={removeParticipant}
               onGenerate={handleGenerate} 
             />
           )}

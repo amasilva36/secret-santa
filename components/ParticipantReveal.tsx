@@ -1,0 +1,1 @@
+// File intentionally left empty as participant reveal component is no longer required.
